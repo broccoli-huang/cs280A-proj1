@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project 1</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center">Project 1</h1>
+        <h4 style="text-align:center">Images of the Russian Empire: Colorizing the Prokudin-Gorskii photo collection</h4>
+    <h2 style="text-align:center">Yuan-Hao Huang</h2>
+        <h4 style="text-align:center">yhhuang20@berkeley.edu</h4>
+    
+    <h2>Algorithms</h2>
+        <h4>For small figures (.jpg)</h4>
+            <p>
+                For small figures, simply shift (using np.roll) the g-layer within a [-20, 20] range in both x, y directions, and find the displacement that lets the g-layer matches the b-layer most.
+                Then do the same for the r-layer. 
+            </p>
+        <h4>What do you mean "matches"?</h4>
+            <p>
+                We believe two layers "matches" when the "distance" between them is minimized. 
+                The distance of two layers is the sum of distance of each corresponding pixels in the two layers. 
+            </p>
+        <h4>What's the distance of two pixels?</h4>
+            <p>Let a, b be the corresponding pixels in the g-layer, b-layer, respectively. 
+                Directly comparing the value of a and b is not reasonable because they just means the brightness in green and blue. 
+                Instead, we want to compare their role, or position, in the entire figure. 
+                Therefore, we represent each pixel by a 4-vector representative, which is the difference of the pixel and its N, E, S, W neighbors. 
+                For example, a is represented by (aN, aE, aS, aW), where aN = |value of a - value of the pixel above a| in the g-layer, etc. 
+                Comparing a pixel with its neighbors allows us to identify the "edges" within the image, and we can further aligns the "edges" of two layers. 
+                The distance of a and b is simply |aN-bN|+|aE-bE|+|aS-bS|+|aW-bW|. 
+                Summing up the distance of all pixels gives the distance of the two layers. 
+            </p>
+        <h4>For large figures (.tif)</h4>
+            <p>
+                Recursively downsize the figure by building pyramids until the height is less than 100. 
+                Then search for best fit within a [-5, 5] range in both x, y directions. 
+                Tracing back the recursive process, given the best displacement of the down-sized (paramid) version, find the best displacement for the original figure by searching within a [-2, 2] neighbor of the given displacement. 
+                Final result is the best displacement of the entire layers. 
+            </p>
+        <h4>Pyramid</h4>
+            <p>
+                Pyramid is built by scaling an image to 1/4 size by taking average of four (2 by 2) adjacent pixels. 
+            </p>
+
+    <h2>Results of small figures (.jpg)</h2>
+        <h4>displacement = [x-offset of g-layer, y-offset of g-layer, x-offset of r-layer, y-offset of r-layer]</h4>
+        <div><img src="cathedral 2 5 3 12.jpg" width="300" align="middle">cathedral, displacement = [2 5 3 12]</div>
+        <div><img src="monastery 2 -3 2 3.jpg" width="300" align="middle">monastery, displacement = [2 -3 2 3]</div>
+        <div><img src="tobolsk 2 3 3 6.jpg" width="300" align="middle">tobolsk, displacement = [2 3 3 6]</div>
+
+    <h2>Results of large figures (.tif)</h2>
+        <h4>displacement = [x-offset of g-layer, y-offset of g-layer, x-offset of r-layer, y-offset of r-layer]</h4>
+        <div><img src="church 4 25 -4 58.jpg" width="600" align="middle">church, displacement = [4 25 -4 58]</div>
+        <div><img src="emir 23 50 41 106.jpg" width="600" align="middle">emir, displacement = [23 50 41 106]</div>
+        <div><img src="harvesters 14 60 12 123.jpg" width="600" align="middle">harvesters, displacement = [14 60 12 123]</div>
+        <div><img src="icon 16 39 23 89.jpg" width="600" align="middle">icon, displacement = [16 39 23 89]</div>
+        <div><img src="lady 9 57 13 120.jpg" width="600" align="middle">lady, displacement = [9 57 13 120]</div>
+        <div><img src="melons 10 80 13 177.jpg" width="600" align="middle">melons, displacement = [10 80 13 177]</div>
+        <div><img src="onion_church 24 52 35 108.jpg" width="600" align="middle">onion_church, displacement = [24 52 35 108]</div>
+        <div><img src="sculpture -11 33 -27 140.jpg" width="600" align="middle">sculpture, displacement = [-11 33 -27 140]</div>
+        <div><img src="self_portrait 30 82 37 175.jpg" width="600" align="middle">self_portrait, displacement = [30 82 37 175]</div>
+        <div><img src="three_generations 12 56 8 111.jpg" width="600" align="middle">three_generations, displacement = [12 56 8 111]</div>
+        <div><img src="train -2 40 28 85.jpg" width="600" align="middle">train, displacement = [-2 40 28 85]</div>
+
+    <h2>References</h2>
+        <h4>numpy</h4>
+            <a href="https://numpy.org/doc/stable/reference/generated/numpy.dstack.html">numpy.dstack</a><br>
+            <a href="https://numpy.org/doc/stable/reference/generated/numpy.roll.html">numpy.roll</a><br>
+            <a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.norm.html">numpy.linalg.norm</a><br>
+            <a href="https://numpy.org/doc/stable/reference/generated/numpy.sqrt.html">numpy.sqrt</a><br>
+            <a href="https://numpy.org/doc/stable/reference/generated/numpy.concatenate.html">numpy.concatenate</a> <br>
+            <a href="https://numpy.org/doc/stable/reference/generated/numpy.heaviside.html">numpy.heaviside</a><br>
+            <a href="https://numpy.org/doc/stable/user/basics.indexing.html">Indexing on ndarrays</a><br>
+            <a href="https://numpy.org/doc/stable/reference/generated/numpy.average.html">numpy.average</a><br>
+        <h4>scikit-image</h4>
+            <a href="https://scikit-image.org/docs/stable/api/skimage.html">skimage</a><br>
+        <h4>stackoverflow</h4>
+            <a href="https://stackoverflow.com/questions/55319949/pil-typeerror-cannot-handle-this-data-type">PIL TypeError: Cannot handle this data type</a><br>
+            <a href="https://stackoverflow.com/questions/50302732/int-vs-astypeint-python">int() vs .astype('int') Python</a><br>
+            <a href="https://stackoverflow.com/questions/50997928/typeerror-only-integer-scalar-arrays-can-be-converted-to-a-scalar-index-with-1d">TypeError: only integer scalar arrays can be converted to a scalar index with 1D numpy indices array</a><br>
+            <a href="https://stackoverflow.com/questions/1557571/how-do-i-get-time-of-a-python-programs-execution">How do I get time of a Python program's execution?</a><br>
+            <a href="https://stackoverflow.com/questions/8885663/how-to-format-a-floating-number-to-fixed-width-in-python">https://stackoverflow.com/questions/8885663/how-to-format-a-floating-number-to-fixed-width-in-python</a><br>
+</body>
+</html>
